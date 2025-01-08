@@ -35,6 +35,19 @@ def _build_by_type(
         raise ValueError(f"Unknown body type {body_type}")
     return actor
 
+def build_from_mesh(
+    scene: ManiSkillScene,
+    name: str,
+    body_type: str = "dynamic",
+    add_collision: bool = True,
+    scene_idxs: Optional[Array] = None,
+    initial_pose: Optional[Union[Pose, sapien.Pose]] = None,
+):
+    builder = scene.create_actor_builder()
+    if add_collision:
+        builder.add_convex_collision_from_file(filename="/home/ysq/project/maniskill/collision.obj")
+    builder.add_visual_from_file(filename="/home/ysq/project/maniskill/texture.obj")
+    return _build_by_type(builder, name, body_type, scene_idxs, initial_pose)
 
 # Primitive Shapes
 def build_cube(
