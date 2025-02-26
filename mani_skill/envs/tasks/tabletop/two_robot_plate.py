@@ -24,30 +24,21 @@ class TwoRobotPlate(BaseEnv):
     """
     Task Description
     ----------------
-    The goal is to have one robot pick up the green cube and the other robot pick up the blue cube. Then the green cube has to be placed down at
-    the target region and the blue cube has to be stacked on top. Note that each robot can only reach one of the cubes to begin with so they must work together
-    to solve the task efficiently. In particular, the green cube is close to the right robot, and the blue cube is close to the left robot.
+    todo
 
     Randomizations
     --------------
-    - both cubes have their z-axis rotation randomized
-    - both cubes have their xy positions on top of the table scene randomized. The positions are sampled such that the cubes do not collide with each other and
-    so that the green cube is close to the robot on the right and the blue cube is close to the robot on the left.
-    - the goal region is initialized in the middle between the two robots (so its y = 0). The only randomization is that it can shift along the mid-line between the two robots
+    todo
 
     Success Conditions
     ------------------
-    - the blue cube is on top of the green cube (to within half of the cube size)
-    - the green cube is on the red white target on the table
-    - the blue and green cube are both not being grasped by the robots (robots must let go of the cubes)
+    todo
 
     Visualization: TODO
     """
 
     SUPPORTED_ROBOTS = [("panda_wristcam", "panda_wristcam")]
     agent: MultiAgent[Tuple[Panda, Panda]]
-
-    goal_radius = 0.06
 
     def __init__(
         self,
@@ -86,7 +77,6 @@ class TwoRobotPlate(BaseEnv):
         )
 
     def _load_scene(self, options: dict):
-        self.cube_half_size = common.to_tensor([0.02] * 3)
         self.table_scene = TableSceneBuilder(
             env=self, robot_init_qpos_noise=self.robot_init_qpos_noise
         )
@@ -95,30 +85,7 @@ class TwoRobotPlate(BaseEnv):
             scene=self.scene,
             name="plate",
             initial_pose=sapien.Pose(p=[0, 0, 0.02]),
-        ) # plate is an actor
-        # self.cubeA = actors.build_cube(
-        #     self.scene,
-        #     half_size=0.02,
-        #     color=np.array([12, 42, 160, 255]) / 255,
-        #     name="cubeA",
-        #     initial_pose=sapien.Pose(p=[1, 0, 0.02]),
-        # )
-        # self.cubeB = actors.build_cube(
-        #     self.scene,
-        #     half_size=0.02,
-        #     color=[0, 1, 0, 1],
-        #     name="cubeB",
-        #     initial_pose=sapien.Pose(p=[-1, 0, 0.02]),
-        # )
-        # self.goal_region = actors.build_red_white_target(
-        #     self.scene,
-        #     radius=self.goal_radius,
-        #     thickness=1e-5,
-        #     name="goal_region",
-        #     add_collision=False,
-        #     body_type="kinematic",
-        #     initial_pose=sapien.Pose(),
-        # )
+        )
 
     def _initialize_episode(self, env_idx: torch.Tensor, options: dict):
         with torch.device(self.device):
@@ -129,9 +96,8 @@ class TwoRobotPlate(BaseEnv):
             plate_xyz = torch.zeros((b, 3))
             plate_xyz[:, 0] = 0.2
             plate_xyz[:, 2] = 0.01
-            theta = torch.tensor(math.radians(0))  # 例如，倾斜 30 度
+            theta = torch.tensor(math.radians(80))  # 例如，倾斜 30 度
         
-            # 计算绕 y 轴旋转的四元数
             qx = torch.tensor(0)
             qy = torch.sin(theta / 2)
             qz = torch.tensor(0)
